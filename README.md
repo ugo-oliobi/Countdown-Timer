@@ -20,7 +20,7 @@ A simple countdown timer with break intervals, built using **React**, **JavaScri
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/shopping-cart-app.git
+   git clone https://github.com/ugo-oliobi/Countdown-Timer
    ```
 2. Navigate to the project directory:
    ```sh
