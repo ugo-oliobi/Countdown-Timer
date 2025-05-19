@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 function App() {
+  // State for timer, break, session, play status, and title
   const [time, setTime] = useState({
     seconds: 0,
     minutes: 25,
@@ -9,12 +10,15 @@ function App() {
     isPlaying: false,
     title: "Session",
   });
-
+  // Ref for audio element
   const audioRef = useRef(null);
+
+  // Handle break length increment/decrement
   function handleBreakLength(e) {
+    // Only allow change if timer is at initial state
     if (time.minutes !== 25 && time.seconds !== 0) return;
     if (e.currentTarget.value === "-") {
-      if (time.break === 1) return;
+      if (time.break === 1) return; // Minimum break length
       setTime((preState) => {
         return {
           ...preState,
@@ -23,7 +27,7 @@ function App() {
       });
     }
     if (e.currentTarget.value === "+") {
-      if (time.break === 60) return;
+      if (time.break === 60) return; // Maximum break length
       setTime((preState) => {
         return {
           ...preState,
@@ -32,7 +36,9 @@ function App() {
       });
     }
   }
+  // Handle session length increment/decrement
   function handleSessionLength(e) {
+    // Only allow change if timer is at initial state
     if (time.minutes !== 25 && time.seconds !== 0) return;
     if (e.currentTarget.value === "-") {
       if (time.session === 1) return;
@@ -45,7 +51,7 @@ function App() {
       });
     }
     if (e.currentTarget.value === "+") {
-      if (time.session === 60) return;
+      if (time.session === 60) return; // Maximum session length
       setTime((preState) => {
         return {
           ...preState,
@@ -55,8 +61,9 @@ function App() {
       });
     }
   }
+  // Handle timer reaching below zero, switch between session and break
   if (time.minutes < 0) {
-    audioRef.current.play();
+    audioRef.current.play(); // Play beep sound
     if (time.title === "Session") {
       setTime((preState) => {
         return {
@@ -78,9 +85,12 @@ function App() {
       });
     }
   }
-  let timer;
+  let timer; // Timer variable for interval
+
+  // useEffect to handle timer countdown
   useEffect(() => {
     if (time.isPlaying) {
+      // Start interval if playing
       timer = setInterval(() => {
         setTime((preState) => {
           return {
@@ -92,12 +102,14 @@ function App() {
         });
       }, 1000);
     } else {
+      // Pause timer if not playing
       clearInterval(timer);
     }
-
+    // Cleanup interval on unmount or when isPlaying changes
     return () => clearInterval(timer);
   }, [time.isPlaying]);
 
+  // Toggle play/pause state
   function playPause(e) {
     if (!e.currentTarget) return;
 
@@ -109,6 +121,7 @@ function App() {
     });
   }
 
+  // Reset timer and audio
   function reset() {
     clearInterval(timer);
     audioRef.current.pause();
@@ -123,14 +136,18 @@ function App() {
       title: "Session",
     });
   }
+
+  // Style for timer color change when minutes reach zero
   const myStyle = {
     color: time.minutes === 0 ? "red" : "white",
   };
+  // Render UI
   return (
     <div id="container">
       <div id="app">
         <div className="main-title"> 25 + 5 Clock</div>
         <div className="control">
+          {/* Break Length Controls */}
           <div className="length-control">
             <div id="break-label">Break Length</div>
             <div className="bl">
@@ -153,6 +170,7 @@ function App() {
               </button>
             </div>
           </div>
+          {/* Session Length Controls */}
           <div className="session-control">
             <div id="session-label">Session Length</div>
             <div className="bl">
@@ -176,6 +194,7 @@ function App() {
             </div>
           </div>
         </div>
+        {/* Timer Display */}
         <div className="session-timer">
           <div id="timer-label" className="timer-title" style={myStyle}>
             {time.title}
@@ -188,6 +207,7 @@ function App() {
             .toString()
             .padStart(2, "0")}`}</div>
         </div>
+        {/* Timer Controls */}
         <div className="timer-control">
           <button id="start_stop" onClick={playPause}>
             <i className="fa fa-play fa-2x btn"></i>
@@ -196,6 +216,7 @@ function App() {
           <button id="reset" onClick={reset}>
             <i className="fa fa-refresh fa-2x btn"></i>
           </button>
+          {/* Audio element for beep */}
           <audio
             id="beep"
             ref={audioRef}
@@ -203,6 +224,7 @@ function App() {
             src="https://cdn.freecodecamp.org/testable-projects-fcc/audio/BeepSound.wav"
           ></audio>
         </div>
+        {/* Author Footer */}
         <div className="author">
           Designed and Coded by <br />{" "}
           <a href="https://www.google.com" target="_blank" rel="noreferrer">
